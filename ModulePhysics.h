@@ -44,8 +44,9 @@ public:
 
 	PhysBody* CreateCircle(int x, int y, int radius, short MASK);
 	PhysBody* CreateRectangle(int x, int y, int width, int height, short MASK);
-	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
+	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, int angle = 0);
 	PhysBody* CreateChain(int x, int y, int* points, int size, short MASK);
+	void ChangeFilter(b2Body* body, short MASK);
 
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);

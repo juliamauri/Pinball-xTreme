@@ -109,11 +109,12 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, sh
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.angle = PIXEL_TO_METERS(angle);
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -169,6 +170,18 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, short 
 	pbody->width = pbody->height = 0;
 
 	return pbody;
+}
+
+void ModulePhysics::ChangeFilter(b2Body * body, short MASK)
+{
+	b2Filter filter;
+
+	for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext())
+	{
+		filter = f->GetFilterData();
+		filter.groupIndex = MASK;
+		f->SetFilterData(filter);
+	}
 }
 
 // 

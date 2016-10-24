@@ -41,6 +41,27 @@ void ModulePlayer::RestorePosBall()
 	ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
 }
 
+void ModulePlayer::RightTubeBallEnter()
+{
+	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+
+	b2Vec2 vel = ball->body->GetLinearVelocity();
+
+	for (uint timer = SDL_GetTicks(); SDL_GetTicks() - timer < 1000; timer)
+		ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(280), PIXEL_TO_METERS(200)), 0);
+
+	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y*-1));
+}
+
+void ModulePlayer::RightTubeBallExit()
+{
+	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+
+	b2Vec2 vel = ball->body->GetLinearVelocity();
+
+	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y / 4));
+}
+
 // Update: draw background
 update_status ModulePlayer::Update()
 {
@@ -48,7 +69,7 @@ update_status ModulePlayer::Update()
 	{
 		if (ball == nullptr)
 		{
-			ball = App->physics->CreateCircle(320, 485, 7, App->scene_intro->CATEGORY_NOTMAIN_PAINBALL);
+			ball = App->physics->CreateCircle(320, 485, 7, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
 			ball->listener = App->scene_intro;
 		}
 		else if (ball != nullptr)

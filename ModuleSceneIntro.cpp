@@ -10,12 +10,12 @@
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = NULL;
+	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = NULL;
 
-	sensoredball_lost = false;
+	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = false;
 
 	CATEGORY_MAIN_PINBALL = -1;
-	CATEGORY_NOTMAIN_PAINBALL = -2;
+	CATEGORY_NOTMAIN_PINBALL = -2;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -42,10 +42,17 @@ bool ModuleSceneIntro::Start()
 	imgthrowercomplement = App->textures->Load("pinball/throwercomplement.png");
 	throwercomplement = App->physics->CreateRectangle(319, 554, 14, 98, CATEGORY_MAIN_PINBALL);
 
+	//Right tube
+	righttube_up = App->textures->Load("pinball/rightuppipe.png");
+	righttube_down = App->textures->Load("pinball/rightdownpipe.png");
+	
+	SetRightTubeChain();
+
 	//Sensors
 	sensorball_lost = App->physics->CreateRectangleSensor(157, 590, 105, 50);
 
-
+	sensorball_enter_RT = App->physics->CreateRectangleSensor(260, 207, 30, 12, 30);
+	sensorball_end_RT = App->physics->CreateRectangleSensor(266, 465, 18, 10);
 
 	return ret;
 }
@@ -58,6 +65,12 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(backgound_border);
 	App->textures->Unload(backgound_shape);
 
+	App->textures->Unload(imgthrower);
+	App->textures->Unload(imgthrowercomplement);
+
+	App->textures->Unload(righttube_up);
+	App->textures->Unload(righttube_down);
+
 	return true;
 }
 
@@ -68,6 +81,10 @@ update_status ModuleSceneIntro::Update()
 	
 	//BackGround
 	App->renderer->Blit(backgound_shape, 0, 0);
+
+	{//Right tube down
+		App->renderer->Blit(righttube_down, 222, 104);
+	}
 
 	if (App->player->ball != nullptr)
 	{//ball
@@ -92,11 +109,27 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(imgthrower, x, y - 3);
 	}
 
+	{//Right tube up
+		App->renderer->Blit(righttube_up, 222, 104);
+	}
+
 	// sensors -------------------
 	if (sensoredball_lost == true)
 	{
 		App->player->RestorePosBall();
 		sensoredball_lost = false;
+	}
+
+	if (sensoredball_enter_RT == true)
+	{
+		App->player->RightTubeBallEnter();
+		sensoredball_enter_RT = false;
+	}
+
+	if (sensoredball_end_RT == true)
+	{
+		App->player->RightTubeBallExit();
+		sensoredball_end_RT = false;
 	}
 
 	return UPDATE_CONTINUE;
@@ -106,6 +139,12 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	if (bodyB == sensorball_lost)
 		sensoredball_lost = true;
+
+	if (bodyB == sensorball_enter_RT)
+		sensoredball_enter_RT = true;
+
+	if (bodyB == sensorball_end_RT)
+		sensoredball_end_RT = true;
 }
 
 void ModuleSceneIntro::SetMainPinballChain()
@@ -408,4 +447,67 @@ void ModuleSceneIntro::SetMainPinballChain()
 		215, 64
 	};
 	pinballtable.add(App->physics->CreateChain(0, 0, pinball_part8, 26, CATEGORY_MAIN_PINBALL));
+}
+
+void ModuleSceneIntro::SetRightTubeChain()
+{
+	int righttube_coord[112] = {
+		269, 137,
+		268, 146,
+		281, 149,
+		282, 145,
+		283, 139,
+		283, 129,
+		280, 120,
+		273, 112,
+		265, 108,
+		258, 105,
+		249, 105,
+		243, 107,
+		238, 110,
+		232, 115,
+		227, 121,
+		224, 133,
+		223, 139,
+		225, 146,
+		228, 151,
+		232, 158,
+		283, 213,
+		294, 230,
+		300, 240,
+		300, 253,
+		300, 259,
+		298, 264,
+		268, 323,
+		262, 343,
+		259, 355,
+		258, 369,
+		257, 471,
+		264, 474,
+		270, 474,
+		274, 472,
+		274, 372,
+		275, 364,
+		277, 349,
+		285, 325,
+		304, 291,
+		313, 272,
+		315, 265,
+		315, 251,
+		315, 230,
+		302, 211,
+		287, 192,
+		244, 150,
+		239, 144,
+		238, 139,
+		238, 134,
+		241, 126,
+		245, 122,
+		250, 119,
+		256, 119,
+		263, 122,
+		267, 127,
+		269, 133
+	};
+	righttube = App->physics->CreateChain(0, 0, righttube_coord, 112, CATEGORY_NOTMAIN_PINBALL);
 }

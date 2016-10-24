@@ -15,6 +15,9 @@ public:
 
 	void RestorePosBall();
 
+	void RightTubeBallEnter();
+	void RightTubeBallExit();
+
 public:
 	PhysBody* ball;
 	SDL_Texture* imgball;
