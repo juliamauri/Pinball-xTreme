@@ -12,8 +12,10 @@
 
 # Build results
 [Dd]ebug/
+!Box2D/libx86/Debug
 [Dd]ebugPublic/
 [Rr]elease/
+!Box2D/libx86/Release
 [Rr]eleases/
 x64/
 x86/
@@ -52,6 +54,7 @@ artifacts/
 *.obj
 *.pch
 *.pdb
+!Box2D/libx86/Debug/Box2D.pdb
 *.pgc
 *.pgd
 *.rsp
