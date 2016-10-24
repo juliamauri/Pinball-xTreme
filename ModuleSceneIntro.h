@@ -18,6 +18,7 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 
 	void SetMainPinballChain();
+	void SetLeftTubeChain();
 	void SetRightTubeChain();
 
 public:
@@ -34,8 +35,20 @@ public:
 	PhysBody* sensorball_lost;
 	bool sensoredball_lost;
 
+	SDL_Texture* lefttube_up_hotel;
+	SDL_Texture* lefttube_down_hotel;
+	//SDL_Texture* lefttube_up_exit;
+	//SDL_Texture* lefttube_down_exit;
+
 	SDL_Texture* righttube_up;
 	SDL_Texture* righttube_down;
+
+	PhysBody* lefttube;
+	PhysBody* sensorball_enter_left;
+	bool sensoredball_enter_left;
+	PhysBody* sensorball_end_left;
+	bool sensoredball_end_left;
+
 	PhysBody* righttube;
 	PhysBody* sensorball_enter_RT;
 	bool sensoredball_enter_RT;
