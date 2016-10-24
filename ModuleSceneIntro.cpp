@@ -6,13 +6,14 @@
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModulePlayer.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	backgound_shape = backgound_border = NULL;
-	ray_on = false;
 
 	CATEGORY_MAIN_PINBALL = -1;
+	CATEGORY_NOTMAIN_PAINBALL = -2;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -39,52 +40,29 @@ bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 
+	App->textures->Unload(backgound_border);
+	App->textures->Unload(backgound_shape);
+
 	return true;
 }
 
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-	{
-		ray_on = !ray_on;
-		ray.x = App->input->GetMouseX();
-		ray.y = App->input->GetMouseY();
-	}
-
-	// Prepare for raycast ------------------------------------------------------
-	
-	iPoint mouse;
-	mouse.x = App->input->GetMouseX();
-	mouse.y = App->input->GetMouseY();
-	int ray_hit = ray.DistanceTo(mouse);
-
-	fVector normal(0.0f, 0.0f);
-
 	// All draw functions ------------------------------------------------------
 	
 	//BackGround
 	App->renderer->Blit(backgound_shape, 0, 0);
 
-
-
-
+	if (App->player->ball != nullptr)
+	{//ball
+		int x, y;
+		App->player->ball->GetPosition(x, y);
+		App->renderer->Blit(App->player->imgball, x, y);
+	}
 
 	//BackGround Mark
 	App->renderer->Blit(backgound_border, 0, 0);
-
-	// ray -----------------
-	if(ray_on == true)
-	{
-		fVector destination(mouse.x-ray.x, mouse.y-ray.y);
-		destination.Normalize();
-		destination *= ray_hit;
-
-		App->renderer->DrawLine(ray.x, ray.y, ray.x + destination.x, ray.y + destination.y, 255, 255, 255);
-
-		if(normal.x != 0.0f)
-			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
-	}
 
 	return UPDATE_CONTINUE;
 }

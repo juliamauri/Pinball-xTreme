@@ -62,6 +62,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, short MASK)
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.bullet = true;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -70,7 +71,6 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, short MASK)
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
-	fixture.isSensor = true;
 	fixture.filter.groupIndex = MASK;
 
 	b->CreateFixture(&fixture);

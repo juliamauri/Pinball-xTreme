@@ -20,12 +20,11 @@ public:
 	void SetMainPinballChain();
 
 public:
-	p2Point<int> ray;
-	bool ray_on;
 
 	p2List<PhysBody*> pinballtable;
 	SDL_Texture* backgound_shape;
 	SDL_Texture* backgound_border;
 
 	short CATEGORY_MAIN_PINBALL;
+	short CATEGORY_NOTMAIN_PAINBALL;
 };
