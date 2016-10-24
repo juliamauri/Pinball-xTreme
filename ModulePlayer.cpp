@@ -34,6 +34,13 @@ bool ModulePlayer::CleanUp()
 	return true;
 }
 
+void ModulePlayer::RestorePosBall()
+{
+	ball->body->SetLinearVelocity(b2Vec2(0, 0));
+	ball->body->SetAngularVelocity(0);
+	ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
+}
+
 // Update: draw background
 update_status ModulePlayer::Update()
 {

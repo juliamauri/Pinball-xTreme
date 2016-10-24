@@ -10,7 +10,9 @@
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	backgound_shape = backgound_border = NULL;
+	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = NULL;
+
+	sensoredball_lost = false;
 
 	CATEGORY_MAIN_PINBALL = -1;
 	CATEGORY_NOTMAIN_PAINBALL = -2;
@@ -26,11 +28,24 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
-
+	
+	//Background
 	backgound_shape = App->textures->Load("pinball/backgroundCombined.png");
 	backgound_border = App->textures->Load("pinball/backgroundBorder.png");
 
 	SetMainPinballChain();
+
+	//Thrower
+	imgthrower = App->textures->Load("pinball/thrower.png");
+	thrower = App->physics->CreateRectangle(319, 537, 16, 61, CATEGORY_MAIN_PINBALL);
+
+	imgthrowercomplement = App->textures->Load("pinball/throwercomplement.png");
+	throwercomplement = App->physics->CreateRectangle(319, 554, 14, 98, CATEGORY_MAIN_PINBALL);
+
+	//Sensors
+	sensorball_lost = App->physics->CreateRectangleSensor(157, 590, 105, 50);
+
+
 
 	return ret;
 }
@@ -61,15 +76,36 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(App->player->imgball, x, y);
 	}
 
+	{//trowercomplement
+		int x, y;
+		throwercomplement->GetPosition(x, y);
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_IDLE)
+			App->renderer->Blit(imgthrowercomplement, x, y + 2);
+	}
+
 	//BackGround Mark
 	App->renderer->Blit(backgound_border, 0, 0);
+
+	{//trower
+		int x, y;
+		thrower->GetPosition(x, y);
+		App->renderer->Blit(imgthrower, x, y - 3);
+	}
+
+	// sensors -------------------
+	if (sensoredball_lost == true)
+	{
+		App->player->RestorePosBall();
+		sensoredball_lost = false;
+	}
 
 	return UPDATE_CONTINUE;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-
+	if (bodyB == sensorball_lost)
+		sensoredball_lost = true;
 }
 
 void ModuleSceneIntro::SetMainPinballChain()

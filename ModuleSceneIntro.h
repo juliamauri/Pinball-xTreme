@@ -25,6 +25,14 @@ public:
 	SDL_Texture* backgound_shape;
 	SDL_Texture* backgound_border;
 
+	PhysBody* thrower;
+	PhysBody* throwercomplement;
+	SDL_Texture* imgthrower;
+	SDL_Texture* imgthrowercomplement;
+
+	PhysBody* sensorball_lost;
+	bool sensoredball_lost;
+
 	short CATEGORY_MAIN_PINBALL;
 	short CATEGORY_NOTMAIN_PAINBALL;
 };

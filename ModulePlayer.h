@@ -13,6 +13,8 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void RestorePosBall();
+
 public:
 	PhysBody* ball;
 	SDL_Texture* imgball;
