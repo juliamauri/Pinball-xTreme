@@ -16,6 +16,7 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 
 	CATEGORY_MAIN_PINBALL = -1;
 	CATEGORY_NOTMAIN_PINBALL = -2;
+	CATEGORY_TRANSPARENCE = 3;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -43,9 +44,10 @@ bool ModuleSceneIntro::Start()
 	throwercomplement = App->physics->CreateRectangle(319, 554, 14, 98, CATEGORY_MAIN_PINBALL);
 
 	//Left tube
-	lefttube_up_hotel = App->textures->Load("pinball/lefttube_up_hotel.png");
-	lefttube_down_hotel = App->textures->Load("pinball/lefttube_down_hotel.png");
-
+	lefttube_hotel_entry = App->textures->Load("pinball/lefttube_hotel_entry.png");
+	lefttube_hotel = App->textures->Load("pinball/lefttube_hotel.png");
+	lefttube_below_exit = App->textures->Load("pinbal/lefttube_below_exit.png");
+	lefttube_above_exit = App->textures->Load("pinball/lefttube_above_exit.png");
 	SetLeftTubeChain();
 
 	//Right tube
@@ -77,8 +79,10 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(imgthrower);
 	App->textures->Unload(imgthrowercomplement);
 
-	App->textures->Unload(lefttube_up_hotel);
-	App->textures->Unload(lefttube_down_hotel);
+	App->textures->Unload(lefttube_hotel_entry);
+	App->textures->Unload(lefttube_hotel);
+	App->textures->Unload(lefttube_below_exit);
+	App->textures->Unload(lefttube_above_exit);
 
 	App->textures->Unload(righttube_up);
 	App->textures->Unload(righttube_down);
@@ -94,11 +98,12 @@ update_status ModuleSceneIntro::Update()
 	//BackGround
 	App->renderer->Blit(backgound_shape, 0, 0);
 
-	//Left tube up
-	App->renderer->Blit(lefttube_up_hotel, 12, 25);
-
-	//Left tube down
-	App->renderer->Blit(lefttube_down_hotel, 12, 25);
+	//Left tube entry
+	App->renderer->Blit(lefttube_hotel_entry, 12, 25);
+	App->renderer->Blit(lefttube_hotel, 12, 25);
+	//Left tube exit
+	App->renderer->Blit(lefttube_below_exit, 12, 25);
+	App->renderer->Blit(lefttube_above_exit, 12, 25);
 
 	//Right tube down
 		App->renderer->Blit(righttube_down, 222, 104);
@@ -138,6 +143,25 @@ update_status ModuleSceneIntro::Update()
 		sensoredball_lost = false;
 	}
 
+	/*while (sensoredball_enter_left == true)
+	{
+		CATEGORY_TRANSPARENCE;
+	
+	
+	else
+		App->player->LeftTubeBallEnter();
+	}
+	if (sensoredball_enter_left2 == true)
+	{
+		App->player->Reset();
+	}
+	*/
+	if (sensoredball_end_left == true)
+	{
+		App->player->Reset();
+
+	}
+
 	if (sensoredball_enter_RT == true)
 	{
 		App->player->RightTubeBallEnter();
@@ -161,6 +185,10 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyB == sensorball_enter_left)
 		sensoredball_enter_left = true;
 
+	if (bodyB == sensorball_enter_left2)
+	{
+		sensoredball_enter_left2 == true;
+	}
 	if (bodyB == sensorball_end_left)
 		sensoredball_end_left = true;
 

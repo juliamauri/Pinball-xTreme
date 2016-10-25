@@ -17,6 +17,7 @@ public:
 
 	void LeftTubeBallEnter();
 	void LeftTubeBallExit();
+	void Reset();
 	void RightTubeBallEnter();
 	void RightTubeBallExit();
 

@@ -41,25 +41,20 @@ void ModulePlayer::RestorePosBall()
 	ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
 }
 
-void ModulePlayer::LeftTubeBallEnter()
+/*void ModulePlayer::LeftTubeBallEnter()
 {
-	/*App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+}*/
 
-	b2Vec2 vel = ball->body->GetLinearVelocity();
+/*void ModulePlayer::LeftTubeBallExit()
+{
+	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+}*/
 
-	for (uint timer = SDL_GetTicks(); SDL_GetTicks() - timer < 1000; timer)
-		ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(280), PIXEL_TO_METERS(200)), 0);
-
-	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y*-1));*/
-}
-
-void ModulePlayer::LeftTubeBallExit()
+void ModulePlayer::Reset()
 {
 	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
 
-	b2Vec2 vel = ball->body->GetLinearVelocity();
-
-	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y / 4));
 }
 
 void ModulePlayer::RightTubeBallEnter()
@@ -101,6 +96,19 @@ update_status ModulePlayer::Update()
 		}
 	}
 
+	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
+	{
+		if (ball == nullptr)
+		{
+			
+		}
+		else if (ball != nullptr)
+		{
+			ball->body->SetLinearVelocity(b2Vec2(0, -10));
+			
+			
+		}
+	}
 
 	return UPDATE_CONTINUE;
 }
