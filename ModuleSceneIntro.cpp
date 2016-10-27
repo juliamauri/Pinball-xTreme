@@ -41,9 +41,9 @@ bool ModuleSceneIntro::Start()
 	imgthrower = App->textures->Load("pinball/thrower.png");
 	thrower = App->physics->CreateRectangle(319, 537, 16, 61, CATEGORY_MAIN_PINBALL);
 	
-
 	imgthrowercomplement = App->textures->Load("pinball/throwercomplement.png");
 	throwercomplement = App->physics->CreateRectangle(319, 554, 14, 98, CATEGORY_MAIN_PINBALL);
+	throwercomplement->listener = this;
 
 	//Left tube
 	lefttube_hotel_entry = App->textures->Load("pinball/lefttube_hotel_entry.png");
@@ -271,6 +271,12 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		item = item->next;
 	}
+
+	if (bodyB == throwercomplement)
+		canthrow = true;
+	else
+		canthrow = false;
+
 }
 
 void ModuleSceneIntro::SetMainPinballChain()

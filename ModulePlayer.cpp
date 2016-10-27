@@ -6,6 +6,7 @@
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleRender.h"
+#include "ModuleAudio.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -69,6 +70,11 @@ bool ModulePlayer::Start()
 
 	//Score
 	imgscore = App->textures->Load("pinball/Game_Over.png");
+	
+	//fxs
+	fx_throw = App->audio->LoadFx("pinball/Audio/Thrower.wav");
+
+	fx_flipper = App->audio->LoadFx("pinball/Audio/Flippers.wav");
 
 	return true;
 }
@@ -175,30 +181,29 @@ update_status ModulePlayer::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
-		//impulseflipperlesft->body->SetLinearVelocity(b2Vec2(0, -50));
 		flipperleft->body->ApplyAngularImpulse(DEGTORAD * -90, true);
+		App->audio->PlayFx(fx_flipper);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
-		//impulseflipperright->body->SetLinearVelocity(b2Vec2(0, -50));
 		flipperright->body->ApplyAngularImpulse(DEGTORAD * 90, true);
+		App->audio->PlayFx(fx_flipper);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-
 		veloy += -0.5f;
-
 		trower = true;
 
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
-		if (ball != nullptr)
+		if (ball != nullptr && App->scene_intro->canthrow == true)
 			ball->body->SetLinearVelocity(b2Vec2(0, veloy));
 
+		App->audio->PlayFx(fx_throw);
 		veloy = 0;
 		trower = false;
 	}

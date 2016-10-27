@@ -32,6 +32,7 @@ public:
 	PhysBody* throwercomplement;
 	SDL_Texture* imgthrower;
 	SDL_Texture* imgthrowercomplement;
+	bool canthrow;
 
 	PhysBody* sensorball_lost;
 	bool sensoredball_lost;

@@ -36,6 +36,10 @@ public:
 	float veloy;
 	bool trower;
 
+	uint fx_throw;
+
+	uint fx_flipper;
+
 	uint live;
 	SDL_Texture* imgscore;
 	bool gameover;
