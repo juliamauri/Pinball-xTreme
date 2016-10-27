@@ -39,6 +39,7 @@ bool ModuleSceneIntro::Start()
 	//Thrower
 	imgthrower = App->textures->Load("pinball/thrower.png");
 	thrower = App->physics->CreateRectangle(319, 537, 16, 61, CATEGORY_MAIN_PINBALL);
+	
 
 	imgthrowercomplement = App->textures->Load("pinball/throwercomplement.png");
 	throwercomplement = App->physics->CreateRectangle(319, 554, 14, 98, CATEGORY_MAIN_PINBALL);
@@ -127,10 +128,19 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	{//trowercomplement
-		int x, y;
-		throwercomplement->GetPosition(x, y);
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_IDLE)
-			App->renderer->Blit(imgthrowercomplement, x, y + 2);
+		if (App->player->trower == true)
+		{
+			int x, y;
+			App->scene_intro->throwercomplement->GetPosition(x, y);
+			App->renderer->Blit(App->scene_intro->imgthrowercomplement, x, y + 2 - (int)App->player->veloy*1.5f);
+		}
+		else
+		{
+			int x, y;
+			throwercomplement->GetPosition(x, y);
+			if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_IDLE)
+				App->renderer->Blit(imgthrowercomplement, x, y + 2);
+		}
 	}
 
 	//BackGround Mark
@@ -169,7 +179,6 @@ update_status ModuleSceneIntro::Update()
 	if (sensoredball_end_left == true)
 	{
 		App->player->Reset();
-
 	}
 
 	if (sensoredball_enter_RT == true)

@@ -5,11 +5,14 @@
 #include "ModuleInput.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
+#include "ModuleRender.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	imgball = NULL;
 	ball = nullptr;
+	veloy = 0;
+	trower = false;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -34,11 +37,10 @@ bool ModulePlayer::Start()
 		2, 3,
 		1, 6
 	};
-	flipperleft = App->physics->CreateChain(93, 529, flipperleft_coords, 20, App->scene_intro->CATEGORY_MAIN_PINBALL,true);
+	flipperleft = App->physics->CreateChain(93, 529, flipperleft_coords, 20, App->scene_intro->CATEGORY_MAIN_PINBALL, true);
 	flipperleft_wheel = App->physics->CreateCircle(100,537,3, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
 	imgflipperleft = App->textures->Load("pinball/flipperleft.png");
-	//App->physics->CreateRevoluteJoint(flipperleft,flipperleft_wheel,0,0,0,0,60,0);
-	impulseflipperlesft = App->physics->CreateCircle(115, 542, 3, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, true, true);
+	App->physics->CreateRevoluteJoint(flipperleft,flipperleft_wheel, 8,8,0,0,60,0);
 
 	int flipperright_coords[20] = {
 		50, 2,
@@ -52,12 +54,10 @@ bool ModulePlayer::Start()
 		3, 21,
 		46, 1
 	};
-	flipperright = App->physics->CreateChain(171, 530, flipperright_coords, 20, App->scene_intro->CATEGORY_MAIN_PINBALL,true);
+	flipperright = App->physics->CreateChain(171, 530, flipperright_coords, 20, App->scene_intro->CATEGORY_MAIN_PINBALL);
 	flipperright_wheel = App->physics->CreateCircle(218, 538, 3, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
 	imgflipperright = App->textures->Load("pinball/flipperright.png");
-	//App->physics->CreateRevoluteJoint(flipperright, flipperright_wheel, 0, 0, 0, 0, 30, -60);
-	impulseflipperright = App->physics->CreateCircle(205,543,3, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, true, true);
-
+	App->physics->CreateRevoluteJoint(flipperright, flipperright_wheel, 47, 8, 0, 0, 0, -60);
 
 	return true;
 }
@@ -91,7 +91,6 @@ void ModulePlayer::RestorePosBall()
 void ModulePlayer::Reset()
 {
 	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
-
 }
 
 void ModulePlayer::RightTubeBallEnter()
@@ -147,16 +146,33 @@ update_status ModulePlayer::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
-		impulseflipperlesft->body->SetLinearVelocity(b2Vec2(0, -50));
-		//flipperleft->body->ApplyAngularImpulse(DEGTORAD * -90, true);
+		//impulseflipperlesft->body->SetLinearVelocity(b2Vec2(0, -50));
+		flipperleft->body->ApplyAngularImpulse(DEGTORAD * -90, true);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
-		impulseflipperright->body->SetLinearVelocity(b2Vec2(0, -50));
-		//flipperright->body->ApplyAngularImpulse(DEGTORAD * 90, true);
+		//impulseflipperright->body->SetLinearVelocity(b2Vec2(0, -50));
+		flipperright->body->ApplyAngularImpulse(DEGTORAD * 90, true);
 	}
 
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	{
+
+		veloy += -0.5f;
+
+		trower = true;
+
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	{
+		if (ball != nullptr)
+			ball->body->SetLinearVelocity(b2Vec2(0, veloy));
+
+		veloy = 0;
+		trower = false;
+	}
 
 	return UPDATE_CONTINUE;
 }

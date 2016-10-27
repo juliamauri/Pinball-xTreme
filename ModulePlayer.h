@@ -27,13 +27,12 @@ public:
 
 	PhysBody* flipperleft;
 	PhysBody* flipperleft_wheel;
-	PhysBody* impulseflipperlesft;
 	SDL_Texture* imgflipperleft;
 
 	PhysBody* flipperright;
 	PhysBody* flipperright_wheel;
-	PhysBody* impulseflipperright;
 	SDL_Texture* imgflipperright;
 
-
+	float veloy;
+	bool trower;
 };
