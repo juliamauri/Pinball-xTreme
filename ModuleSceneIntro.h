@@ -57,6 +57,9 @@ public:
 	PhysBody* sensorball_end_RT;
 	bool sensoredball_end_RT;
 
+	p2List<PhysBody*> reboters;
+	SDL_Texture* imgreboter;
+
 	short CATEGORY_MAIN_PINBALL;
 	short CATEGORY_NOTMAIN_PINBALL;
 	short CATEGORY_TRANSPARENCE;

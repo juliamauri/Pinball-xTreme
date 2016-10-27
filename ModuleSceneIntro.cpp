@@ -10,7 +10,7 @@
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = NULL;
+	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = imgreboter = NULL;
 
 	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = false;
 
@@ -56,6 +56,12 @@ bool ModuleSceneIntro::Start()
 	righttube_down = App->textures->Load("pinball/rightdownpipe.png");
 	
 	SetRightTubeChain();
+
+	//Reboter
+	reboters.add(App->physics->CreateCircle(250,120,14,CATEGORY_MAIN_PINBALL,2.0f,false,false));
+	reboters.add(App->physics->CreateCircle(216, 158, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
+	reboters.add(App->physics->CreateCircle(170, 118, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
+	imgreboter = App->textures->Load("pinball/reboter.png");
 
 	//Sensors
 	sensorball_lost = App->physics->CreateRectangleSensor(157, 590, 105, 50);
@@ -125,6 +131,19 @@ update_status ModuleSceneIntro::Update()
 
 		App->player->flipperright->GetPosition(x, y);
 		App->renderer->Blit(App->player->imgflipperright, x, y);
+	}
+
+	//Reboters
+	{
+		p2List_item<PhysBody*>* reboter = reboters.getFirst();
+
+		while (reboter != nullptr)
+		{
+			int x, y;
+			reboter->data->GetPosition(x,y);
+			App->renderer->Blit(imgreboter, x, y);
+			reboter = reboter->next;
+		}
 	}
 
 	{//trowercomplement

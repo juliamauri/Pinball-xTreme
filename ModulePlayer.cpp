@@ -121,7 +121,7 @@ update_status ModulePlayer::Update()
 	{
 		if (ball == nullptr)
 		{
-			ball = App->physics->CreateCircle(320, 485, 7, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+			ball = App->physics->CreateCircle(320, 485, 7, App->scene_intro->CATEGORY_NOTMAIN_PINBALL,0.1f);
 			ball->listener = App->scene_intro;
 		}
 		else if (ball != nullptr)
