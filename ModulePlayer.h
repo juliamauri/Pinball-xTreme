@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "p2Point.h"
+#include "ModulePhysics.h"
 
 class ModulePlayer : public Module
 {
@@ -34,6 +35,7 @@ public:
 	PhysBody* flipperright_wheel;
 	SDL_Texture* imgflipperright;
 	b2RevoluteJointDef revoluteJointDef_right;
+
 
 	float veloy;
 	bool trower;

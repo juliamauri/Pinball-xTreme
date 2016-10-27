@@ -142,9 +142,13 @@ update_status ModuleSceneIntro::Update()
 
 	//flippers
 	{
-		App->renderer->Blit(App->player->imgflipperleft, 93, 529);
+		float32 angle;
 
-		App->renderer->Blit(App->player->imgflipperright, 171, 530);
+		angle = App->player->flipperleft->body->GetAngle();
+		App->renderer->Blit(App->player->imgflipperleft, 93, 529,NULL,1.0f,RADTODEG * angle - 17,10,10);
+
+		angle = App->player->flipperright->body->GetAngle();
+		App->renderer->Blit(App->player->imgflipperright, 171, 530,NULL,1.0f, RADTODEG *angle +18,45,10);
 	}
 
 	//Reboters
@@ -218,6 +222,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		App->player->RightTubeBallEnter();
 		App->audio->PlayFx(fx_righttube);
+		App->player->score += 5000;
 		sensoredball_enter_RT = false;
 	}
 

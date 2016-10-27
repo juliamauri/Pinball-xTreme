@@ -22,6 +22,9 @@ public:
 	void SetLeftTubeChain();
 	void SetRightTubeChain();
 
+	void SetLeftFlipper();
+	void SetRightFlipper();
+
 public:
 
 	p2List<PhysBody*> pinballtable;

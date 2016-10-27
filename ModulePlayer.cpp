@@ -3,7 +3,6 @@
 #include "ModuleTextures.h"
 #include "ModulePlayer.h"
 #include "ModuleInput.h"
-#include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleRender.h"
 #include "ModuleAudio.h"
@@ -30,20 +29,23 @@ bool ModulePlayer::Start()
 	imgball = App->textures->Load("pinball/ball.png");
 	
 	flipperleft = App->physics->CreateRectangle(122,538,49,6,App->scene_intro->CATEGORY_MAIN_PINBALL);
+	flipperleft->body->SetType(b2_dynamicBody);
 	flipperleft_wheel = App->physics->CreateCircle(100,538,2, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
 	imgflipperleft = App->textures->Load("pinball/flipperleft.png");
+
 	
 	revoluteJointDef_left.bodyA = flipperleft->body;
 	revoluteJointDef_left.bodyB = flipperleft_wheel->body;
 	revoluteJointDef_left.referenceAngle = 0 * DEGTORAD;
 	revoluteJointDef_left.enableLimit = true;
-	revoluteJointDef_left.lowerAngle = -30 * DEGTORAD;
+	revoluteJointDef_left.lowerAngle = -15 * DEGTORAD;
 	revoluteJointDef_left.upperAngle = 30 * DEGTORAD;
-	revoluteJointDef_left.localAnchorA.Set(PIXEL_TO_METERS(-1), 0);
+	revoluteJointDef_left.localAnchorA.Set(PIXEL_TO_METERS(-24), 0);
 	revoluteJointDef_left.localAnchorB.Set(0, 0);
 	b2RevoluteJoint* joint_left = (b2RevoluteJoint*)App->physics->world->CreateJoint(&revoluteJointDef_left);
 
 	flipperright = App->physics->CreateRectangle(197, 538, 49, 6, App->scene_intro->CATEGORY_MAIN_PINBALL);
+	flipperright->body->SetType(b2_dynamicBody);
 	flipperright_wheel = App->physics->CreateCircle(218, 538, 2, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
 	imgflipperright = App->textures->Load("pinball/flipperright.png");
 
@@ -52,11 +54,11 @@ bool ModulePlayer::Start()
 	revoluteJointDef_right.referenceAngle = 0 * DEGTORAD;
 	revoluteJointDef_right.enableLimit = true;
 	revoluteJointDef_right.lowerAngle = -30 * DEGTORAD;
-	revoluteJointDef_right.upperAngle = 30 * DEGTORAD;
-	revoluteJointDef_right.localAnchorA.Set(PIXEL_TO_METERS(1), 0);
+	revoluteJointDef_right.upperAngle = 15 * DEGTORAD;
+	revoluteJointDef_right.localAnchorA.Set(PIXEL_TO_METERS(24), 0);
 	revoluteJointDef_right.localAnchorB.Set(0, 0);
 	b2RevoluteJoint* joint_right = (b2RevoluteJoint*)App->physics->world->CreateJoint(&revoluteJointDef_right);
-
+	
 
 	//Init Ball
 	ball = App->physics->CreateCircle(320, 485, 7, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, 0.1f);
@@ -177,13 +179,19 @@ update_status ModulePlayer::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
-		flipperleft->body->ApplyAngularImpulse(DEGTORAD * -90, true);
+		b2Vec2 force = b2Vec2(0, -200);
+		flipperleft->body->ApplyForceToCenter(force, 1);
+		revoluteJointDef_left.lowerAngle = 30 * DEGTORAD;
+
 		App->audio->PlayFx(fx_flipper);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
-		flipperright->body->ApplyAngularImpulse(DEGTORAD * 90, true);
+		b2Vec2 force = b2Vec2(0, -200);
+		flipperright->body->ApplyForceToCenter(force, 1);
+		revoluteJointDef_right.lowerAngle = 30 * DEGTORAD;
+
 		App->audio->PlayFx(fx_flipper);
 	}
 
