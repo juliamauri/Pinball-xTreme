@@ -9,10 +9,11 @@
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	imgball = NULL;
+	imgball = imgflipperleft = imgflipperright = imgscore = NULL;
 	ball = nullptr;
 	veloy = 0;
-	trower = false;
+	trower = gameover = false;
+	live = 0;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -59,6 +60,14 @@ bool ModulePlayer::Start()
 	imgflipperright = App->textures->Load("pinball/flipperright.png");
 	App->physics->CreateRevoluteJoint(flipperright, flipperright_wheel, 47, 8, 0, 0, 0, -60);
 
+	//Init Ball
+	ball = App->physics->CreateCircle(320, 485, 7, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, 0.1f);
+	ball->listener = App->scene_intro;
+	live++;
+
+	//Score
+	imgscore = App->textures->Load("pinball/Game_Over.png");
+
 	return true;
 }
 
@@ -68,14 +77,31 @@ bool ModulePlayer::CleanUp()
 	LOG("Unloading player");
 	App->textures->Unload(imgball);
 
+	App->textures->Unload(imgflipperleft);
+	App->textures->Unload(imgflipperright);
+
+	App->textures->Unload(imgscore);
+
 	return true;
 }
 
-void ModulePlayer::RestorePosBall()
+void ModulePlayer::RestorePosBall(bool reset)
 {
-	ball->body->SetLinearVelocity(b2Vec2(0, 0));
-	ball->body->SetAngularVelocity(0);
-	ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
+	if (++live >= 6 && reset == false)
+		gameover = true;
+	else if (reset == true)
+	{
+		ball->body->SetLinearVelocity(b2Vec2(0, 0));
+		ball->body->SetAngularVelocity(0);
+		ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
+		live = 1;
+	}
+	else
+	{
+		ball->body->SetLinearVelocity(b2Vec2(0, 0));
+		ball->body->SetAngularVelocity(0);
+		ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
+	}
 }
 
 /*void ModulePlayer::LeftTubeBallEnter()
@@ -172,6 +198,17 @@ update_status ModulePlayer::Update()
 
 		veloy = 0;
 		trower = false;
+	}
+
+	if (gameover == true)
+	{
+		App->renderer->Blit(imgscore, 0, 0);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+	{
+		gameover = false;
+		RestorePosBall(true);
 	}
 
 	return UPDATE_CONTINUE;

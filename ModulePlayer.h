@@ -13,7 +13,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	void RestorePosBall();
+	void RestorePosBall(bool reset = false);
 
 	void LeftTubeBallEnter();
 	void LeftTubeBallExit();
@@ -35,4 +35,8 @@ public:
 
 	float veloy;
 	bool trower;
+
+	uint live;
+	SDL_Texture* imgscore;
+	bool gameover;
 };

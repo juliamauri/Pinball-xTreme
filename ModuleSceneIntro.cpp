@@ -47,7 +47,7 @@ bool ModuleSceneIntro::Start()
 	//Left tube
 	lefttube_hotel_entry = App->textures->Load("pinball/lefttube_hotel_entry.png");
 	lefttube_hotel = App->textures->Load("pinball/lefttube_hotel.png");
-	lefttube_below_exit = App->textures->Load("pinbal/lefttube_below_exit.png");
+	lefttube_below_exit = App->textures->Load("pinball/lefttube_below_exit.png");
 	lefttube_above_exit = App->textures->Load("pinball/lefttube_above_exit.png");
 	SetLeftTubeChain();
 
@@ -58,18 +58,27 @@ bool ModuleSceneIntro::Start()
 	SetRightTubeChain();
 
 	//Reboter
+	p2List_item<PhysBody*>* item;
 	reboters.add(App->physics->CreateCircle(250,120,14,CATEGORY_MAIN_PINBALL,2.0f,false,false));
 	reboters.add(App->physics->CreateCircle(216, 158, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
 	reboters.add(App->physics->CreateCircle(170, 118, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
 	imgreboter = App->textures->Load("pinball/reboter.png");
 
-	//Sensors
-	sensorball_lost = App->physics->CreateRectangleSensor(157, 590, 105, 50);
+	item = reboters.getFirst();
 
-	sensorball_enter_left = App->physics->CreateRectangleSensor(75,247,32,15,-30);
+	while (item != nullptr)
+	{
+		item->data->listener = this;
+		item = item->next;
+	}
+
+	//Sensors
+	sensorball_lost = App->physics->CreateRectangleSensor(157, 600, 105, 50);
+
+	sensorball_enter_left = App->physics->CreateRectangleSensor(75,247,32,15,-50);
 	sensorball_end_left = App->physics->CreateRectangleSensor(48, 444, 18, 16, 0);
 	
-	sensorball_enter_RT = App->physics->CreateRectangleSensor(263, 206, 28, 12, 30);
+	sensorball_enter_RT = App->physics->CreateRectangleSensor(263, 203, 28, 12, 37);
 	sensorball_end_RT = App->physics->CreateRectangleSensor(266, 465, 18, 10);
 
 	return ret;
@@ -94,6 +103,8 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(righttube_up);
 	App->textures->Unload(righttube_down);
 
+	App->textures->Unload(imgreboter);
+
 	return true;
 }
 
@@ -115,7 +126,6 @@ update_status ModuleSceneIntro::Update()
 	//Right tube down
 		App->renderer->Blit(righttube_down, 222, 104);
 	
-
 	if (App->player->ball != nullptr)
 	{//ball
 		int x, y;
