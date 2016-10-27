@@ -39,4 +39,6 @@ public:
 	uint live;
 	SDL_Texture* imgscore;
 	bool gameover;
+	uint score;
+	uint best_score;
 };

@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "p2List.h"
 #include "p2Point.h"
+#include "p2SString.h"
 #include "Globals.h"
 
 class PhysBody;
@@ -59,6 +60,8 @@ public:
 
 	p2List<PhysBody*> reboters;
 	SDL_Texture* imgreboter;
+	uint fx_reboter;
+	bool reboted;
 
 	short CATEGORY_MAIN_PINBALL;
 	short CATEGORY_NOTMAIN_PINBALL;

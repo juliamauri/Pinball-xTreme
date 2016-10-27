@@ -14,6 +14,8 @@ ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, s
 	veloy = 0;
 	trower = gameover = false;
 	live = 0;
+	score = 0;
+	best_score = 0;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -94,6 +96,7 @@ void ModulePlayer::RestorePosBall(bool reset)
 		ball->body->SetLinearVelocity(b2Vec2(0, 0));
 		ball->body->SetAngularVelocity(0);
 		ball->body->SetTransform(b2Vec2(PIXEL_TO_METERS(320), PIXEL_TO_METERS(485)), 0);
+		score = 0;
 		live = 1;
 	}
 	else
@@ -203,6 +206,9 @@ update_status ModulePlayer::Update()
 	if (gameover == true)
 	{
 		App->renderer->Blit(imgscore, 0, 0);
+
+		if (score > best_score)
+			best_score = score;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)

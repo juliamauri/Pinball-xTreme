@@ -7,12 +7,13 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "ModulePlayer.h"
+#include "ModuleWindow.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = imgreboter = NULL;
 
-	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = false;
+	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = reboted = false;
 
 	CATEGORY_MAIN_PINBALL = -1;
 	CATEGORY_NOTMAIN_PINBALL = -2;
@@ -65,6 +66,8 @@ bool ModuleSceneIntro::Start()
 	imgreboter = App->textures->Load("pinball/reboter.png");
 
 	item = reboters.getFirst();
+
+	fx_reboter = App->audio->LoadFx("pinball/Audio/Reboter.wav");
 
 	while (item != nullptr)
 	{
@@ -222,6 +225,18 @@ update_status ModuleSceneIntro::Update()
 		sensoredball_end_RT = false;
 	}
 
+	if (reboted == true)
+	{
+		App->player->score += 1000;
+		App->audio->PlayFx(fx_reboter);
+		reboted = false;
+	}
+	
+	//Window Title
+	p2SString title("BS: %i - Score: %i", App->player->best_score, App->player->score);
+
+	App->window->SetTitle(title.GetString());
+
 	return UPDATE_CONTINUE;
 }
 
@@ -245,6 +260,17 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	if (bodyB == sensorball_end_RT)
 		sensoredball_end_RT = true;
+
+	p2List_item<PhysBody*>* item = reboters.getFirst();
+
+	while (item != nullptr)
+	{
+		if (bodyB == item->data)
+		{
+			reboted = true;
+		}
+		item = item->next;
+	}
 }
 
 void ModuleSceneIntro::SetMainPinballChain()
