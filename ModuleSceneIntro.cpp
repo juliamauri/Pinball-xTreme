@@ -80,7 +80,7 @@ bool ModuleSceneIntro::Start()
 	}
 
 	//Sensors
-	sensorball_lost = App->physics->CreateRectangleSensor(157, 600, 105, 50);
+	sensorball_lost = App->physics->CreateRectangleSensor(157, 600, 350, 50);
 
 	sensorball_enter_left = App->physics->CreateRectangleSensor(75,247,32,15,-50);
 	sensorball_end_left = App->physics->CreateRectangleSensor(48, 444, 18, 16, 0);
