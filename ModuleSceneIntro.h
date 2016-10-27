@@ -49,6 +49,7 @@ public:
 	bool sensoredball_enter_left2;
 	PhysBody* sensorball_end_left;
 	bool sensoredball_end_left;
+	uint fx_lefttube;
 
 	SDL_Texture* righttube_up;
 	SDL_Texture* righttube_down;
@@ -58,11 +59,20 @@ public:
 	bool sensoredball_enter_RT;
 	PhysBody* sensorball_end_RT;
 	bool sensoredball_end_RT;
+	uint fx_righttube;
 
 	p2List<PhysBody*> reboters;
 	SDL_Texture* imgreboter;
 	uint fx_reboter;
 	bool reboted;
+
+	PhysBody* triangleleft;
+	SDL_Texture* imgtriangleleft;
+
+	PhysBody* triangleright;
+	SDL_Texture* imgtiangleright;
+	uint fx_triangle;
+	bool triangled;
 
 	short CATEGORY_MAIN_PINBALL;
 	short CATEGORY_NOTMAIN_PINBALL;

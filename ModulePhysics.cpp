@@ -197,26 +197,6 @@ void ModulePhysics::ChangeFilter(b2Body * body, short MASK)
 	}
 }
 
-void ModulePhysics::CreateRevoluteJoint(PhysBody * body_1, PhysBody * body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int max_angle, int min_angle)
-{
-	b2RevoluteJointDef def;
-
-	def.bodyA = body_1->body;
-	def.bodyB = body_2->body;
-
-	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
-	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));
-
-	if (max_angle != INT_MAX && min_angle != INT_MIN)
-	{
-		def.enableLimit = true;
-		def.upperAngle = DEGTORAD * max_angle;
-		def.lowerAngle = DEGTORAD * min_angle;
-	}
-
-	world->CreateJoint(&def);
-}
-
 // 
 update_status ModulePhysics::PostUpdate()
 {

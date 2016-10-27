@@ -29,39 +29,33 @@ bool ModulePlayer::Start()
 
 	imgball = App->textures->Load("pinball/ball.png");
 	
-	int flipperleft_coords[20] = {
-		1, 7,
-		1, 10,
-		5, 14,
-		7, 15,
-		50, 26,
-		53, 25,
-		52, 22,
-		6, 1,
-		2, 3,
-		1, 6
-	};
-	flipperleft = App->physics->CreateChain(93, 529, flipperleft_coords, 20, App->scene_intro->CATEGORY_MAIN_PINBALL, true);
-	flipperleft_wheel = App->physics->CreateCircle(100,537,3, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
+	flipperleft = App->physics->CreateRectangle(122,538,49,6,App->scene_intro->CATEGORY_MAIN_PINBALL);
+	flipperleft_wheel = App->physics->CreateCircle(100,538,2, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
 	imgflipperleft = App->textures->Load("pinball/flipperleft.png");
-	App->physics->CreateRevoluteJoint(flipperleft,flipperleft_wheel, 8,8,0,0,60,0);
+	
+	revoluteJointDef_left.bodyA = flipperleft->body;
+	revoluteJointDef_left.bodyB = flipperleft_wheel->body;
+	revoluteJointDef_left.referenceAngle = 0 * DEGTORAD;
+	revoluteJointDef_left.enableLimit = true;
+	revoluteJointDef_left.lowerAngle = -30 * DEGTORAD;
+	revoluteJointDef_left.upperAngle = 30 * DEGTORAD;
+	revoluteJointDef_left.localAnchorA.Set(PIXEL_TO_METERS(-1), 0);
+	revoluteJointDef_left.localAnchorB.Set(0, 0);
+	b2RevoluteJoint* joint_left = (b2RevoluteJoint*)App->physics->world->CreateJoint(&revoluteJointDef_left);
 
-	int flipperright_coords[20] = {
-		50, 2,
-		53, 4,
-		54, 7,
-		54, 10,
-		52, 14,
-		45, 16,
-		4, 25,
-		2, 24,
-		3, 21,
-		46, 1
-	};
-	flipperright = App->physics->CreateChain(171, 530, flipperright_coords, 20, App->scene_intro->CATEGORY_MAIN_PINBALL);
-	flipperright_wheel = App->physics->CreateCircle(218, 538, 3, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
+	flipperright = App->physics->CreateRectangle(197, 538, 49, 6, App->scene_intro->CATEGORY_MAIN_PINBALL);
+	flipperright_wheel = App->physics->CreateCircle(218, 538, 2, App->scene_intro->CATEGORY_NOTMAIN_PINBALL, false, false);
 	imgflipperright = App->textures->Load("pinball/flipperright.png");
-	App->physics->CreateRevoluteJoint(flipperright, flipperright_wheel, 47, 8, 0, 0, 0, -60);
+
+	revoluteJointDef_right.bodyA = flipperright->body;
+	revoluteJointDef_right.bodyB = flipperright_wheel->body;
+	revoluteJointDef_right.referenceAngle = 0 * DEGTORAD;
+	revoluteJointDef_right.enableLimit = true;
+	revoluteJointDef_right.lowerAngle = -30 * DEGTORAD;
+	revoluteJointDef_right.upperAngle = 30 * DEGTORAD;
+	revoluteJointDef_right.localAnchorA.Set(PIXEL_TO_METERS(1), 0);
+	revoluteJointDef_right.localAnchorB.Set(0, 0);
+	b2RevoluteJoint* joint_right = (b2RevoluteJoint*)App->physics->world->CreateJoint(&revoluteJointDef_right);
 
 
 	//Init Ball

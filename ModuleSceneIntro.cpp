@@ -52,11 +52,15 @@ bool ModuleSceneIntro::Start()
 	lefttube_above_exit = App->textures->Load("pinball/lefttube_above_exit.png");
 	SetLeftTubeChain();
 
+	fx_lefttube = App->audio->LoadFx("pinball/Audio/Left_Tube.wav");
+
 	//Right tube
 	righttube_up = App->textures->Load("pinball/rightuppipe.png");
 	righttube_down = App->textures->Load("pinball/rightdownpipe.png");
 	
 	SetRightTubeChain();
+
+	fx_righttube = App->audio->LoadFx("pinball/Audio/Righ_tube.wav");
 
 	//Reboter
 	p2List_item<PhysBody*>* item;
@@ -138,12 +142,9 @@ update_status ModuleSceneIntro::Update()
 
 	//flippers
 	{
-		int x, y;
-		App->player->flipperleft->GetPosition(x, y);
-		App->renderer->Blit(App->player->imgflipperleft, x, y);
+		App->renderer->Blit(App->player->imgflipperleft, 93, 529);
 
-		App->player->flipperright->GetPosition(x, y);
-		App->renderer->Blit(App->player->imgflipperright, x, y);
+		App->renderer->Blit(App->player->imgflipperright, 171, 530);
 	}
 
 	//Reboters
@@ -216,6 +217,7 @@ update_status ModuleSceneIntro::Update()
 	if (sensoredball_enter_RT == true)
 	{
 		App->player->RightTubeBallEnter();
+		App->audio->PlayFx(fx_righttube);
 		sensoredball_enter_RT = false;
 	}
 
@@ -223,6 +225,12 @@ update_status ModuleSceneIntro::Update()
 	{
 		App->player->RightTubeBallExit();
 		sensoredball_end_RT = false;
+	}
+
+	if (sensoredball_enter_left == true)
+	{
+		App->audio->PlayFx(fx_lefttube);
+		sensoredball_enter_left = false;
 	}
 
 	if (reboted == true)

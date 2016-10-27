@@ -47,8 +47,6 @@ public:
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, int angle = 0);
 	PhysBody* CreateChain(int x, int y, int* points, int size, short MASK, bool dynamic = false);
 	void ChangeFilter(b2Body* body, short MASK);
-	void CreateRevoluteJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int max_angle, int min_angle);
-
 
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);

@@ -28,10 +28,12 @@ public:
 	PhysBody* flipperleft;
 	PhysBody* flipperleft_wheel;
 	SDL_Texture* imgflipperleft;
+	b2RevoluteJointDef revoluteJointDef_left;
 
 	PhysBody* flipperright;
 	PhysBody* flipperright_wheel;
 	SDL_Texture* imgflipperright;
+	b2RevoluteJointDef revoluteJointDef_right;
 
 	float veloy;
 	bool trower;
