@@ -57,12 +57,19 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, short MASK)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, short MASK, bool dynamic, bool bullet)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+
+	if (dynamic == true)
+		body.type = b2_dynamicBody;
+	else if(dynamic == false)
+		body.type = b2_staticBody;
+
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-	body.bullet = true;
+
+	if(bullet == true)
+		body.bullet = true;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -137,10 +144,15 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, short MASK)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, short MASK, bool dynamic)
 {
 	b2BodyDef body;
-	body.type = b2_staticBody;
+
+	if (dynamic == false)
+		body.type = b2_staticBody;
+	else if (dynamic == true)
+		body.type = b2_dynamicBody;
+
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -182,6 +194,26 @@ void ModulePhysics::ChangeFilter(b2Body * body, short MASK)
 		filter.groupIndex = MASK;
 		f->SetFilterData(filter);
 	}
+}
+
+void ModulePhysics::CreateRevoluteJoint(PhysBody * body_1, PhysBody * body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int max_angle, int min_angle)
+{
+	b2RevoluteJointDef def;
+
+	def.bodyA = body_1->body;
+	def.bodyB = body_2->body;
+
+	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
+	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));
+
+	if (max_angle != INT_MAX && min_angle != INT_MIN)
+	{
+		def.enableLimit = true;
+		def.upperAngle = DEGTORAD * max_angle;
+		def.lowerAngle = DEGTORAD * min_angle;
+	}
+
+	world->CreateJoint(&def);
 }
 
 // 

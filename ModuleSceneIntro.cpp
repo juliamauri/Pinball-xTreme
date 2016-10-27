@@ -116,6 +116,16 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(App->player->imgball, x, y);
 	}
 
+	//flippers
+	{
+		int x, y;
+		App->player->flipperleft->GetPosition(x, y);
+		App->renderer->Blit(App->player->imgflipperleft, x, y);
+
+		App->player->flipperright->GetPosition(x, y);
+		App->renderer->Blit(App->player->imgflipperright, x, y);
+	}
+
 	{//trowercomplement
 		int x, y;
 		throwercomplement->GetPosition(x, y);
