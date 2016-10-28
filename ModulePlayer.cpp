@@ -197,7 +197,7 @@ update_status ModulePlayer::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
-		b2Vec2 force = b2Vec2(0, -200);
+		b2Vec2 force = b2Vec2(0, -250);
 		flipperleft->body->ApplyForceToCenter(force, 1);
 		revoluteJointDef_left.lowerAngle = 30 * DEGTORAD;
 
@@ -206,7 +206,7 @@ update_status ModulePlayer::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
-		b2Vec2 force = b2Vec2(0, -200);
+		b2Vec2 force = b2Vec2(0, -250);
 		flipperright->body->ApplyForceToCenter(force, 1);
 		revoluteJointDef_right.lowerAngle = 30 * DEGTORAD;
 
