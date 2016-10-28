@@ -242,6 +242,7 @@ update_status ModulePlayer::Update()
 	{
 		gameover = false;
 		RestorePosBall(true);
+		App->physics->ChangeFilter(App->scene_intro->cylinder->body,App->scene_intro->CATEGORY_NOTMAIN_PINBALL );
 	}
 
 	return UPDATE_CONTINUE;

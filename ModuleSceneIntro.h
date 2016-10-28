@@ -21,7 +21,6 @@ public:
 	void SetMainPinballChain();
 	void SetLeftTubeChain();
 	void SetRightTubeChain();
-
 public:
 
 	p2List<PhysBody*> pinballtable;
@@ -54,6 +53,10 @@ public:
 	bool sensoredball_end_left;
 	uint fx_lefttube;
 	bool lefttube_active;
+
+	PhysBody* cylinder;
+	PhysBody* sensor_cylinder;
+	bool sensored_cylinder;
 
 	SDL_Texture* righttube_up;
 	SDL_Texture* righttube_down;

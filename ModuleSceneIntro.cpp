@@ -13,7 +13,7 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 {
 	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = imgreboter = NULL;
 
-	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = reboted = sensoredball_enter_left = sensoredball_points_left = sensoredball_end_left = sensoredball_enterext_left = lefttube_active = false;
+	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = reboted = sensored_cylinder = sensoredball_enter_left = sensoredball_points_left = sensoredball_end_left = sensoredball_enterext_left = lefttube_active = false;
 
 	CATEGORY_MAIN_PINBALL = -1;
 	CATEGORY_NOTMAIN_PINBALL = -2;
@@ -63,9 +63,9 @@ bool ModuleSceneIntro::Start()
 
 	//Reboter
 	p2List_item<PhysBody*>* item;
-	reboters.add(App->physics->CreateCircle(250,120,14,CATEGORY_MAIN_PINBALL,2.0f,false,false));
-	reboters.add(App->physics->CreateCircle(216, 158, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
-	reboters.add(App->physics->CreateCircle(170, 118, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
+	reboters.add(App->physics->CreateCircle(249,120,14,CATEGORY_MAIN_PINBALL,2.0f,false,false));
+	reboters.add(App->physics->CreateCircle(216, 151, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
+	reboters.add(App->physics->CreateCircle(173, 118, 14, CATEGORY_MAIN_PINBALL,2.0f, false, false));
 	imgreboter = App->textures->Load("pinball/reboter.png");
 
 	item = reboters.getFirst();
@@ -86,6 +86,7 @@ bool ModuleSceneIntro::Start()
 	sensorball_points_left = App->physics->CreateRectangleSensor(190,50,10,5,90);
 	sensorball_end_left = App->physics->CreateRectangleSensor(48, 465, 10, 10);
 
+	sensor_cylinder = App->physics->CreateRectangleSensor(320, 165, 10, 10);
 	sensorball_enter_RT = App->physics->CreateRectangleSensor(263, 205,28, 12, 37);
 	sensorball_end_RT = App->physics->CreateRectangleSensor(266, 465, 18, 10);
 
@@ -200,9 +201,15 @@ update_status ModuleSceneIntro::Update()
 	if (sensoredball_lost)
 	{
 		App->player->RestorePosBall();
+		App->physics->ChangeFilter(cylinder->body, CATEGORY_NOTMAIN_PINBALL);
 		sensoredball_lost = false;
 	}
 
+	if (sensored_cylinder)
+	{
+		App->physics->ChangeFilter(cylinder->body, CATEGORY_MAIN_PINBALL);
+		sensored_cylinder = false;
+	}
 	if (sensoredball_enter_RT)
 	{
 		if (!lefttube_active)
@@ -269,6 +276,9 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	if (bodyB == sensorball_lost)
 		sensoredball_lost = true;
+
+	if (bodyB == sensor_cylinder)
+		sensored_cylinder = true;
 
 	if (bodyB == sensorball_enter_left)
 		sensoredball_enter_left = true;
@@ -543,24 +553,7 @@ void ModuleSceneIntro::SetMainPinballChain()
 	pinballtable.add(App->physics->CreateChain(0, 0, pinball_part3, 49, CATEGORY_MAIN_PINBALL));
 
 	//Barra per on passa la bola al llançar-la
-	/*
-	int pinball_part4[26] = {
-	280, 294,
-	292, 267,
-	302, 241,
-	309, 222,
-	313, 207,
-	317, 208,
-	315, 220,
-	312, 231,
-	306, 248,
-	302, 258,
-	295, 272,
-	287, 289,
-	283, 296
-	};
-	pinballtable.add(App->physics->CreateChain(0, 0, pinball_part4, 26, true));
-	*/
+	
 
 	int pinball_part5[24] = {
 		34, 455,
@@ -625,7 +618,27 @@ void ModuleSceneIntro::SetMainPinballChain()
 		215, 64
 	};
 	pinballtable.add(App->physics->CreateChain(0, 0, pinball_part8, 26, CATEGORY_MAIN_PINBALL));
+
+	int paintball_part4[28] = {
+		279, 296,
+		290, 276,
+		301, 254,
+		308, 234,
+		314, 217,
+		319, 199,
+		324, 170,
+		327, 175,
+		322, 201,
+		318, 219,
+		312, 235,
+		303, 257,
+		294, 277,
+		283, 296
+	};
+	cylinder = App->physics->CreateChain(0, 0, paintball_part4, 28, CATEGORY_NOTMAIN_PINBALL);
+	pinballtable.add(cylinder);
 }
+
 
 void ModuleSceneIntro::SetLeftTubeChain()
 {
