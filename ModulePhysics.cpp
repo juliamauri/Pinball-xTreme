@@ -93,11 +93,12 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, short MASK,float
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, short MASK)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, short MASK, float restitution, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.angle = PIXEL_TO_METERS(angle);
 
 	b2Body* b = world->CreateBody(&body);
 	b2PolygonShape box;
@@ -107,6 +108,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, sh
 	fixture.shape = &box;
 	fixture.density = 1.0f;
 	fixture.filter.groupIndex = MASK;
+	fixture.restitution = restitution;
 
 	b->CreateFixture(&fixture);
 

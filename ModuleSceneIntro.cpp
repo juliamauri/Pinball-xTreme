@@ -11,7 +11,7 @@
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = imgreboter = NULL;
+	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = imgreboter = imgtiangleright = imgtriangleleft = NULL;
 
 	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = reboted = sensored_cylinder = sensoredball_enter_left = sensoredball_points_left = sensoredball_end_left = sensoredball_enterext_left = lefttube_active = false;
 
@@ -43,6 +43,45 @@ bool ModuleSceneIntro::Start()
 	imgthrowercomplement = App->textures->Load("pinball/throwercomplement.png");
 	throwercomplement = App->physics->CreateRectangle(319, 554, 14, 98, CATEGORY_MAIN_PINBALL);
 	throwercomplement->listener = this;
+
+	//Triangles
+	int triangleleft_coord[24] = {
+		63, 449,
+		63, 484,
+		64, 488,
+		66, 491,
+		92, 504,
+		98, 505,
+		102, 504,
+		102, 497,
+		72, 447,
+		69, 444,
+		66, 444,
+		64, 446
+	};
+	triangleleft = App->physics->CreateChain(0, 0, triangleleft_coord, 24, CATEGORY_MAIN_PINBALL);
+	triangleleft_bouncer = App->physics->CreateRectangle(87,472,60,5,CATEGORY_MAIN_PINBALL,2.5f,53);
+	imgtriangleleft = App->textures->Load("pinball/triangleleft.png");
+
+	int triangleright_coord[24] = {
+		238, 457,
+		215, 495,
+		214, 501,
+		216, 505,
+		221, 505,
+		247, 493,
+		251, 490,
+		253, 486,
+		253, 447,
+		250, 444,
+		246, 444,
+		241, 452
+	};
+	triangleright = App->physics->CreateChain(0, 0, triangleright_coord, 24, CATEGORY_MAIN_PINBALL);
+	triangleright_bouncer = App->physics->CreateRectangle(229, 469, 60, 5, CATEGORY_MAIN_PINBALL, 2.5f, -53);
+	imgtiangleright = App->textures->Load("pinball/triangleright.png");
+
+	fx_triangle = App->audio->LoadFx("pinball/Audio/Triangle.wav");
 
 	//Left tube
 	lefttube_hotel_entry = App->textures->Load("pinball/lefttube_hotel_entry.png");
@@ -114,6 +153,9 @@ bool ModuleSceneIntro::CleanUp()
 
 	App->textures->Unload(imgreboter);
 
+	App->textures->Unload(imgtiangleright);
+	App->textures->Unload(imgtriangleleft);
+
 	return true;
 }
 
@@ -139,6 +181,11 @@ update_status ModuleSceneIntro::Update()
 		int x, y;
 		App->player->ball->GetPosition(x, y);
 		App->renderer->Blit(App->player->imgball, x, y);
+	}
+
+	{//Triangles
+		App->renderer->Blit(imgtriangleleft, 62, 443);
+		App->renderer->Blit(imgtiangleright, 214, 443);
 	}
 
 	//flippers
@@ -263,6 +310,13 @@ update_status ModuleSceneIntro::Update()
 		App->audio->PlayFx(fx_reboter);
 		reboted = false;
 	}
+
+	if (triangled)
+	{
+		App->player->score += 500;
+		App->audio->PlayFx(fx_triangle);
+		triangled = false;
+	}
 	
 	//Window Title
 	p2SString title("BS: %i - Score: %i", App->player->best_score, App->player->score);
@@ -297,6 +351,9 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	if (bodyB == sensorball_end_RT)
 		sensoredball_end_RT = true;
+
+	if (bodyB == triangleleft_bouncer || bodyB == triangleright_bouncer)
+		triangled = true;
 
 	p2List_item<PhysBody*>* item = reboters.getFirst();
 

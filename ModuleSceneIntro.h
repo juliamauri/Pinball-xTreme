@@ -74,9 +74,11 @@ public:
 	bool reboted;
 
 	PhysBody* triangleleft;
+	PhysBody* triangleleft_bouncer;
 	SDL_Texture* imgtriangleleft;
 
 	PhysBody* triangleright;
+	PhysBody* triangleright_bouncer;
 	SDL_Texture* imgtiangleright;
 	uint fx_triangle;
 	bool triangled;
