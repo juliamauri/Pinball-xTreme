@@ -22,9 +22,6 @@ public:
 	void SetLeftTubeChain();
 	void SetRightTubeChain();
 
-	void SetLeftFlipper();
-	void SetRightFlipper();
-
 public:
 
 	p2List<PhysBody*> pinballtable;
@@ -46,13 +43,17 @@ public:
 	SDL_Texture* lefttube_above_exit;
 
 	PhysBody* lefttube;
+	PhysBody* lefttube_intermediate;
 	PhysBody* sensorball_enter_left;
 	bool sensoredball_enter_left; 
-	PhysBody* sensorball_enter_left2;
-	bool sensoredball_enter_left2;
+	PhysBody* sensorball_enterext_left;
+	bool sensoredball_enterext_left;
+	PhysBody* sensorball_points_left;
+	bool sensoredball_points_left;
 	PhysBody* sensorball_end_left;
 	bool sensoredball_end_left;
 	uint fx_lefttube;
+	bool lefttube_active;
 
 	SDL_Texture* righttube_up;
 	SDL_Texture* righttube_down;
@@ -79,5 +80,4 @@ public:
 
 	short CATEGORY_MAIN_PINBALL;
 	short CATEGORY_NOTMAIN_PINBALL;
-	short CATEGORY_TRANSPARENCE;
 };

@@ -17,8 +17,9 @@ public:
 	void RestorePosBall(bool reset = false);
 
 	void LeftTubeBallEnter();
+	void LeftTubeBallEnterExt();
 	void LeftTubeBallExit();
-	void Reset();
+
 	void RightTubeBallEnter();
 	void RightTubeBallExit();
 

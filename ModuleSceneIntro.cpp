@@ -13,11 +13,10 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 {
 	backgound_shape = backgound_border = imgthrower = imgthrowercomplement = righttube_up = righttube_down = imgreboter = NULL;
 
-	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = reboted = false;
+	sensoredball_lost = sensoredball_enter_RT = sensoredball_end_RT = reboted = sensoredball_enter_left = sensoredball_points_left = sensoredball_end_left = sensoredball_enterext_left = lefttube_active = false;
 
 	CATEGORY_MAIN_PINBALL = -1;
 	CATEGORY_NOTMAIN_PINBALL = -2;
-	CATEGORY_TRANSPARENCE = 3;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -82,10 +81,12 @@ bool ModuleSceneIntro::Start()
 	//Sensors
 	sensorball_lost = App->physics->CreateRectangleSensor(157, 600, 350, 50);
 
-	sensorball_enter_left = App->physics->CreateRectangleSensor(75,247,32,15,-50);
-	sensorball_end_left = App->physics->CreateRectangleSensor(48, 444, 18, 16, 0);
-	
-	sensorball_enter_RT = App->physics->CreateRectangleSensor(263, 203, 28, 12, 37);
+	sensorball_enter_left = App->physics->CreateRectangleSensor(50,164,11,15,90);
+	sensorball_enterext_left = App->physics->CreateRectangleSensor(50, 137, 11, 5, 28);
+	sensorball_points_left = App->physics->CreateRectangleSensor(190,50,10,5,90);
+	sensorball_end_left = App->physics->CreateRectangleSensor(48, 465, 10, 10);
+
+	sensorball_enter_RT = App->physics->CreateRectangleSensor(263, 205,28, 12, 37);
 	sensorball_end_RT = App->physics->CreateRectangleSensor(266, 465, 18, 10);
 
 	return ret;
@@ -124,14 +125,13 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(backgound_shape, 0, 0);
 
 	//Left tube entry
-	App->renderer->Blit(lefttube_hotel_entry, 12, 25);
-	App->renderer->Blit(lefttube_hotel, 12, 25);
+	App->renderer->Blit(lefttube_hotel_entry, 12, 28);
+	App->renderer->Blit(lefttube_hotel, 12, 28);
 	//Left tube exit
-	App->renderer->Blit(lefttube_below_exit, 12, 25);
-	App->renderer->Blit(lefttube_above_exit, 12, 25);
+	App->renderer->Blit(lefttube_below_exit, 12, 28);
 
 	//Right tube down
-		App->renderer->Blit(righttube_down, 222, 104);
+	App->renderer->Blit(righttube_down, 222, 104);
 	
 	if (App->player->ball != nullptr)
 	{//ball
@@ -189,56 +189,68 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(imgthrower, x, y - 3);
 	}
 
+	//Left tube entry up
+	App->renderer->Blit(lefttube_above_exit, 12, 28);
+
 	{//Right tube up
 		App->renderer->Blit(righttube_up, 222, 104);
 	}
 
 	// sensors -------------------
-	if (sensoredball_lost == true)
+	if (sensoredball_lost)
 	{
 		App->player->RestorePosBall();
 		sensoredball_lost = false;
 	}
 
-	/*while (sensoredball_enter_left == true)
+	if (sensoredball_enter_RT)
 	{
-		CATEGORY_TRANSPARENCE;
-	
-	
-	else
-		App->player->LeftTubeBallEnter();
-	}
-	if (sensoredball_enter_left2 == true)
-	{
-		App->player->Reset();
-	}
-	*/
-	if (sensoredball_end_left == true)
-	{
-		App->player->Reset();
-	}
-
-	if (sensoredball_enter_RT == true)
-	{
-		App->player->RightTubeBallEnter();
-		App->audio->PlayFx(fx_righttube);
-		App->player->score += 5000;
+		if (!lefttube_active)
+		{
+			App->player->RightTubeBallEnter();
+			App->audio->PlayFx(fx_righttube);
+			App->player->score += 5000;
+		}
 		sensoredball_enter_RT = false;
 	}
 
-	if (sensoredball_end_RT == true)
+	if (sensoredball_end_RT)
 	{
 		App->player->RightTubeBallExit();
 		sensoredball_end_RT = false;
 	}
 
-	if (sensoredball_enter_left == true)
+	if (sensoredball_enter_left)
 	{
-		App->audio->PlayFx(fx_lefttube);
+		App->player->LeftTubeBallEnter();
+		lefttube_active = true;
 		sensoredball_enter_left = false;
 	}
 
-	if (reboted == true)
+	if (sensoredball_enterext_left)
+	{
+		App->player->LeftTubeBallEnterExt();
+		sensoredball_enterext_left = false;
+	}
+
+	if (sensoredball_points_left)
+	{
+		if (lefttube_active)
+		{
+			App->audio->PlayFx(fx_lefttube);
+			App->player->score += 5000;
+		}
+		sensoredball_points_left = false;
+	}
+
+	if (sensoredball_end_left)
+	{
+		App->player->LeftTubeBallExit();
+		lefttube_active = false;
+		sensoredball_end_left = false;
+	}
+
+	if (reboted)
 	{
 		App->player->score += 1000;
 		App->audio->PlayFx(fx_reboter);
@@ -261,10 +273,12 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyB == sensorball_enter_left)
 		sensoredball_enter_left = true;
 
-	if (bodyB == sensorball_enter_left2)
-	{
-		sensoredball_enter_left2 == true;
-	}
+	if (bodyB == sensorball_enterext_left)
+		sensoredball_enterext_left = true;
+
+	if (bodyB == sensorball_points_left)
+		sensoredball_points_left = true;
+
 	if (bodyB == sensorball_end_left)
 		sensoredball_end_left = true;
 
@@ -372,9 +386,7 @@ void ModuleSceneIntro::SetMainPinballChain()
 	};
 	pinballtable.add(App->physics->CreateChain(0, 0, pinball, 148, CATEGORY_MAIN_PINBALL));
 
-	int pinball_part1[120] = {
-		47, 258,
-		46, 250,
+	int pinball_part1[158] = {
 		43, 240,
 		40, 224,
 		38, 198,
@@ -418,23 +430,44 @@ void ModuleSceneIntro::SetMainPinballChain()
 		83, 207,
 		90, 222,
 		93, 226,
-		93, 230,
-		90, 231,
-		54, 258,
-		53, 261,
-		50, 261,
-		50, 261,
-		50, 261,
-		90, 231,
-		90, 231,
-		54, 258,
-		53, 261,
-		50, 261,
-		50, 261,
-		50, 261,
-		50, 261
+		92, 228,
+		89, 229,
+		88, 236,
+		92, 240,
+		100, 250,
+		103, 257,
+		102, 261,
+		99, 262,
+		95, 262,
+		81, 243,
+		73, 231,
+		67, 218,
+		63, 208,
+		60, 179,
+		59, 169,
+		59, 155,
+		42, 150,
+		41, 155,
+		41, 169,
+		41, 180,
+		42, 202,
+		43, 219,
+		46, 237,
+		49, 249,
+		51, 254,
+		56, 256,
+		61, 261,
+		65, 267,
+		71, 271,
+		69, 274,
+		68, 280,
+		66, 284,
+		60, 284,
+		49, 265,
+		48, 259,
+		45, 250
 	};
-	pinballtable.add(App->physics->CreateChain(0, 0, pinball_part1, 100, CATEGORY_MAIN_PINBALL));
+	pinballtable.add(App->physics->CreateChain(0, 0, pinball_part1, 158, CATEGORY_MAIN_PINBALL));
 
 	int pinball_part2[82] = {
 		196, 206,
@@ -596,69 +629,105 @@ void ModuleSceneIntro::SetMainPinballChain()
 
 void ModuleSceneIntro::SetLeftTubeChain()
 {
-	int lefttube_coord[118] = {
-		50, 252,
-		43, 215,
-		40, 179,
-		41, 143,
-		48, 111,
-		66, 79,
-		88, 56,
-		115, 41,
-		138, 36,
-		161, 33,
-		190, 38,
-		219, 53,
-		245, 78,
-		258, 107,
-		263, 133,
-		261, 163,
-		253, 193,
-		231, 223,
-		208, 249,
-		176, 269,
-		145, 289,
-		120, 308,
-		102, 328,
-		88, 347,
-		77, 372,
-		67, 402,
-		64, 430,
-		62, 457,
-		40, 459,
-		41, 431,
-		43, 403,
-		49, 375,
-		60, 347,
-		74, 324,
-		96, 303,
-		120, 280,
-		160, 252,
-		189, 233,
-		207, 219,
-		226, 200,
-		237, 178,
-		242, 151,
-		242, 125,
-		234, 100,
-		223, 82,
-		205, 69,
-		185, 57,
-		165, 52,
-		142, 54,
-		119, 62,
-		98, 74,
-		81, 89,
-		70, 112,
-		67, 131,
-		64, 148,
-		66, 172,
-		69, 189,
-		74, 212,
-		82, 230
+		int lefttube_coord[154] = {
+			59, 155,
+			40, 150,
+			45, 113,
+			53, 98,
+			61, 86,
+			68, 76,
+			77, 66,
+			90, 56,
+			107, 46,
+			125, 41,
+			147, 37,
+			168, 38,
+			191, 41,
+			214, 52,
+			235, 70,
+			247, 86,
+			254, 95,
+			263, 118,
+			266, 138,
+			265, 159,
+			261, 180,
+			253, 201,
+			236, 225,
+			219, 243,
+			200, 258,
+			179, 273,
+			147, 292,
+			133, 303,
+			111, 321,
+			98, 338,
+			90, 349,
+			82, 361,
+			76, 375,
+			71, 390,
+			68, 401,
+			65, 413,
+			63, 428,
+			62, 444,
+			61, 465,
+			61, 473,
+			57, 480,
+			50, 482,
+			43, 480,
+			41, 476,
+			41, 447,
+			45, 415,
+			52, 384,
+			62, 360,
+			75, 337,
+			93, 312,
+			124, 287,
+			148, 270,
+			176, 253,
+			201, 236,
+			220, 217,
+			238, 190,
+			245, 169,
+			248, 155,
+			249, 137,
+			245, 124,
+			239, 107,
+			229, 93,
+			215, 78,
+			194, 65,
+			182, 57,
+			176, 55,
+			160, 54,
+			147, 54,
+			132, 55,
+			116, 61,
+			103, 69,
+			89, 81,
+			82, 92,
+			75, 104,
+			69, 118,
+			65, 127,
+			60, 143
 	};
-	lefttube = App->physics->CreateChain(0, 0, lefttube_coord, 118, CATEGORY_NOTMAIN_PINBALL);
+	lefttube = App->physics->CreateChain(0, 0, lefttube_coord, 154, CATEGORY_NOTMAIN_PINBALL);
+
+	int lefttube_intermediate_coord[24] = {
+		60, 183,
+		41, 187,
+		40, 163,
+		41, 141,
+		44, 126,
+		49, 111,
+		56, 100,
+		73, 102,
+		67, 118,
+		62, 131,
+		59, 145,
+		58, 165
+	};
+	lefttube_intermediate = App->physics->CreateChain(0, 0, lefttube_intermediate_coord, 20, CATEGORY_NOTMAIN_PINBALL);
+
 }
+
 void ModuleSceneIntro::SetRightTubeChain()
 {
 	int righttube_coord[112] = {

@@ -111,24 +111,42 @@ void ModulePlayer::RestorePosBall(bool reset)
 	}
 }
 
-/*void ModulePlayer::LeftTubeBallEnter()
+void ModulePlayer::LeftTubeBallEnter()
 {
 	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
-}*/
 
-/*void ModulePlayer::LeftTubeBallExit()
+	App->physics->ChangeFilter(App->scene_intro->lefttube->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+
+	App->physics->ChangeFilter(App->scene_intro->righttube->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+
+	b2Vec2 vel = ball->body->GetLinearVelocity();
+	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y*2));
+}
+
+void ModulePlayer::LeftTubeBallEnterExt()
+{
+
+	App->physics->ChangeFilter(App->scene_intro->lefttube->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+
+	App->physics->ChangeFilter(App->scene_intro->lefttube_intermediate->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+}
+
+void ModulePlayer::LeftTubeBallExit()
 {
 	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
-}*/
 
-void ModulePlayer::Reset()
-{
-	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+	App->physics->ChangeFilter(App->scene_intro->righttube->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+
+	App->physics->ChangeFilter(App->scene_intro->lefttube_intermediate->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+
+	b2Vec2 vel = ball->body->GetLinearVelocity();
+	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y / 4));
 }
 
 void ModulePlayer::RightTubeBallEnter()
 {
 	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
+	App->physics->ChangeFilter(App->scene_intro->lefttube->body, App->scene_intro->CATEGORY_MAIN_PINBALL);
 
 	b2Vec2 vel = ball->body->GetLinearVelocity();
 
@@ -141,9 +159,9 @@ void ModulePlayer::RightTubeBallEnter()
 void ModulePlayer::RightTubeBallExit()
 {
 	App->physics->ChangeFilter(ball->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
+	App->physics->ChangeFilter(App->scene_intro->lefttube->body, App->scene_intro->CATEGORY_NOTMAIN_PINBALL);
 
 	b2Vec2 vel = ball->body->GetLinearVelocity();
-
 	ball->body->SetLinearVelocity(b2Vec2(vel.x, vel.y / 4));
 }
 
